@@ -1,9 +1,54 @@
 version: '3.8'
+
 services:
-  jumpserver:
+  jumpserver-db:
+    image: postgres:15-alpine
+    container_name: jumpserver-db
+    restart: always
+    environment:
+      POSTGRES_DB: jumpserver
+      POSTGRES_USER: jms
+      POSTGRES_PASSWORD: jms_secure_password_2026
+    volumes:
+      - jms-db-data:/var/lib/postgresql/data
+    networks:
+      - jms-net
+
+  jumpserver-redis:
+    image: redis:7-alpine
+    container_name: jumpserver-redis
+    restart: always
+    volumes:
+      - jms-redis-data:/data
+    networks:
+      - jms-net
+
+  jumpserver-core:
     image: jumpserver/core:v5.0.0-ce
     container_name: jumpserver-core
     restart: always
     ports:
       - "80:80"
       - "2222:2222"
+    environment:
+      - DB_ENGINE=postgresql
+      - DB_HOST=jumpserver-db
+      - DB_PORT=5432
+      - DB_USER=jms
+      - DB_PASSWORD=jms_secure_password_2026
+      - DB_NAME=jumpserver
+      - REDIS_HOST=jumpserver-redis
+      - REDIS_PORT=6379
+    depends_on:
+      - jumpserver-db
+      - jumpserver-redis
+    networks:
+      - jms-net
+
+volumes:
+  jms-db-data:
+  jms-redis-data:
+
+networks:
+  jms-net:
+    driver: bridge
