@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  jumpserver:
+    image: jumpserver/core:v5.0.0-ce
+    container_name: jumpserver-core
+    restart: always
+    ports:
+      - "80:80"
+      - "2222:2222"
