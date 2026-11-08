@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   jumpserver-db:
     image: postgres:15-alpine
@@ -39,6 +37,8 @@ services:
       - DB_NAME=jumpserver
       - REDIS_HOST=jumpserver-redis
       - REDIS_PORT=6379
+      - SECRET_KEY=django-insecure-pfe-tekup-2026-secure-key-validation
+      - BOOTSTRAP_TOKEN=secret_bootstrap_token_2026
     depends_on:
       - jumpserver-db
       - jumpserver-redis
